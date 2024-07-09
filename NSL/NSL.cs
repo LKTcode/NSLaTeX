@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 
 namespace NSLaTeX.Synctax
@@ -46,6 +46,8 @@ namespace NSLaTeX.Synctax
             string input = Input;
             var results = new List<CMD>();
             int i = 0;
+            List<string> SpaceList = new List<string>();
+            string SpaceChar = "";
             while (i < input.Length)
             {
                 if (input[i] == '\\' && input.Substring(i + 1).StartsWith(CMDName))
@@ -54,9 +56,11 @@ namespace NSLaTeX.Synctax
                     var parameters = new List<string>();
                     while (i < input.Length && (input[i] == '{' || char.IsWhiteSpace(input[i])))
                     {
-                        // Skip white space
-                        while (i < input.Length && char.IsWhiteSpace(input[i])) i++;
-
+                        while (i < input.Length && char.IsWhiteSpace(input[i]))
+                        {
+                            i++;
+                            SpaceChar += input[i];
+                        }
                         if (i < input.Length && input[i] == '{')
                         {
                             int braceLevel = 1;
@@ -75,6 +79,8 @@ namespace NSLaTeX.Synctax
                             if (paramStart < input.Length && i > paramStart)
                             {
                                 parameters.Add(paramBuilder.ToString());
+                                SpaceList.Add(SpaceChar);
+                                SpaceChar = "";
                             }
                         }
                     }
